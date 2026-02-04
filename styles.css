@@ -160,18 +160,23 @@ body {
 
 .sidebar-toggle {
     display: none;
-    background: var(--primary-700);
+    position: fixed;
+    top: var(--space-md);
+    left: var(--space-md);
+    z-index: 1100;
+    background: var(--primary-800);
     border: none;
     cursor: pointer;
     padding: var(--space-sm);
     flex-direction: column;
     gap: 5px;
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
+    box-shadow: var(--shadow-lg);
 }
 
 .sidebar-toggle:hover {
