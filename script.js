@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initAccordions();
     initSmoothScroll();
     initAnimations();
+    initMobileEnhancements();
 });
 
 /**
@@ -22,9 +23,17 @@ function initSidebar() {
 
     // Toggle sidebar on mobile
     if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
+        sidebarToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
             sidebar.classList.toggle('open');
             this.classList.toggle('active');
+            
+            // Prevent body scroll when sidebar is open
+            if (sidebar.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
         });
     }
 
@@ -33,6 +42,7 @@ function initSidebar() {
         link.addEventListener('click', function() {
             if (window.innerWidth <= 1024) {
                 sidebar.classList.remove('open');
+                document.body.style.overflow = '';
                 if (sidebarToggle) {
                     sidebarToggle.classList.remove('active');
                 }
@@ -44,12 +54,75 @@ function initSidebar() {
     document.addEventListener('click', function(e) {
         if (window.innerWidth <= 1024 && 
             !sidebar.contains(e.target) && 
+            !sidebarToggle.contains(e.target) &&
             sidebar.classList.contains('open')) {
             sidebar.classList.remove('open');
+            document.body.style.overflow = '';
             if (sidebarToggle) {
                 sidebarToggle.classList.remove('active');
             }
         }
+    });
+
+    // Handle escape key to close sidebar
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            document.body.style.overflow = '';
+            if (sidebarToggle) {
+                sidebarToggle.classList.remove('active');
+            }
+        }
+    });
+
+    // Handle resize - close sidebar if switching to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 1024 && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            document.body.style.overflow = '';
+            if (sidebarToggle) {
+                sidebarToggle.classList.remove('active');
+            }
+        }
+    });
+}
+
+/**
+ * Mobile-specific enhancements
+ */
+function initMobileEnhancements() {
+    // Add touch feedback to clickable cards
+    const clickableCards = document.querySelectorAll('.clickable-card');
+    clickableCards.forEach(card => {
+        card.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.98)';
+        }, { passive: true });
+        
+        card.addEventListener('touchend', function() {
+            this.style.transform = '';
+        }, { passive: true });
+    });
+
+    // Improve checkbox touch targets
+    const checkboxLabels = document.querySelectorAll('.action-checkbox label');
+    checkboxLabels.forEach(label => {
+        label.addEventListener('touchstart', function(e) {
+            // Expand touch area
+            this.style.transform = 'scale(1.1)';
+        }, { passive: true });
+        
+        label.addEventListener('touchend', function() {
+            this.style.transform = '';
+        }, { passive: true });
+    });
+
+    // Handle orientation change
+    window.addEventListener('orientationchange', function() {
+        // Small delay to let the browser finish reorienting
+        setTimeout(function() {
+            window.scrollBy(0, 1);
+            window.scrollBy(0, -1);
+        }, 100);
     });
 }
 
